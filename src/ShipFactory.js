@@ -12,14 +12,6 @@ export default function ShipFactory(length) {
     hitboxes[index].hit = true
     return [...hitboxes]
   }
-  /*
-  Ship = {
-    length, 
-    hitboxes: [{hit: false}, {hit: false}, {hit: false}]
-    hit(),
-    isSunk
-  }
-  */
 
   return {
     get hitboxes() {
