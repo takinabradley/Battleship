@@ -81,11 +81,22 @@ test("cannot reassign individual hitboxes", () => {
   expect(Ship.hitboxes[0]).toEqual({ hit: false })
 })
 
+test("cannot reassing individial hitbox values", () => {
+  const Ship = ShipFactory(3)
+
+  Ship.hitboxes[0].hit = true
+  Ship.hitboxes[0].newValue = "new value!"
+
+  expect(Ship.hitboxes[0].hit).toEqual(false)
+})
+
 test("hit method can reassign hitbox values", () => {
   const Ship = ShipFactory(2)
 
   expect(Ship.hit(0)).toEqual([{ hit: true }, { hit: false }])
+  expect(Ship.hitboxes).toEqual([{ hit: true }, { hit: false }])
   expect(Ship.hit(1)).toEqual([{ hit: true }, { hit: true }])
+  expect(Ship.hitboxes).toEqual([{ hit: true }, { hit: true }])
 })
 
 test("isSunk getter returns true when all hitboxes 'hit' values are true", () => {

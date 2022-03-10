@@ -15,7 +15,9 @@ export default function ShipFactory(length) {
 
   return {
     get hitboxes() {
-      return [...hitboxes]
+      return hitboxes.map((hitbox) => {
+        return { ...hitbox }
+      })
     },
     get isSunk() {
       if (hitboxes.every((hitbox) => hitbox.hit === true)) {
