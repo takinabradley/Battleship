@@ -67,7 +67,7 @@ test("Ship is not sunk when it is created", () => {
   expect(ship5.isSunk).toBe(false)
 })
 
-test("cannot reassign hitboxes", () => {
+test("cannot reassign hitboxes array", () => {
   const Ship = ShipFactory(3)
 
   expect(() => (Ship.hitboxes = [])).toThrowError()
