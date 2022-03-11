@@ -1,10 +1,14 @@
 export default function ShipFactory(length) {
   if (length <= 0 || length > 5) return
 
-  const hitboxes = []
+  const hitboxes = _createHitboxes()
 
-  for (let i = 0; i < length; i++) {
-    hitboxes.push({ hit: false })
+  function _createHitboxes() {
+    const array = []
+    for (let i = 0; i < length; i++) {
+      array.push({ hit: false })
+    }
+    return array
   }
 
   function hit(index) {
