@@ -1,5 +1,5 @@
 export default function ShipFactory(length) {
-  if (length <= 0 || length > 5) return
+  if (length < 2 || length > 5) return
 
   const hitboxes = _createHitboxes()
 
