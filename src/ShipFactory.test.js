@@ -1,22 +1,22 @@
 import ShipFactory from "./ShipFactory"
 /* global test, expect */
 
-test('outputs an object with "hitboxes", "isSunk", and "hit" properties/methods', () => {
+test('outputs an object with "hitboxes", and "isSunk" properties/methods', () => {
   expect(ShipFactory(2)).toHaveProperty("isSunk")
   expect(ShipFactory(2)).toHaveProperty("hitboxes")
-  expect(ShipFactory(2)).toHaveProperty("hit")
 
   expect(ShipFactory(3)).toHaveProperty("isSunk")
   expect(ShipFactory(3)).toHaveProperty("hitboxes")
-  expect(ShipFactory(3)).toHaveProperty("hit")
 
   expect(ShipFactory(4)).toHaveProperty("isSunk")
   expect(ShipFactory(4)).toHaveProperty("hitboxes")
-  expect(ShipFactory(4)).toHaveProperty("hit")
 
   expect(ShipFactory(5)).toHaveProperty("isSunk")
   expect(ShipFactory(5)).toHaveProperty("hitboxes")
-  expect(ShipFactory(5)).toHaveProperty("hit")
+})
+
+test("hitboxes have a 'hit' method", () => {
+  expect(typeof ShipFactory(2).hitboxes[0].hit).toBe("function")
 })
 
 test("rejects an number less than 2 and more than 5", () => {
@@ -31,21 +31,32 @@ test('object created has "length" number of hitboxes', () => {
   const hitboxes4 = ShipFactory(4).hitboxes
   const hitboxes5 = ShipFactory(5).hitboxes
 
-  expect(hitboxes2).toEqual([{ hit: false }, { hit: false }])
-  expect(hitboxes3).toEqual([{ hit: false }, { hit: false }, { hit: false }])
+  expect(hitboxes2.length).toEqual(2)
+  expect(hitboxes3.length).toEqual(3)
+  expect(hitboxes4.length).toEqual(4)
+  expect(hitboxes5.length).toEqual(5)
+
+  /*
+  expect(hitboxes2).toEqual([{ isHit: false }, { isHit: false }])
+  expect(hitboxes3).toEqual([
+    { isHit: false },
+    { isHit: false },
+    { isHit: false },
+  ])
   expect(hitboxes4).toEqual([
-    { hit: false },
-    { hit: false },
-    { hit: false },
-    { hit: false },
+    { isHit: false },
+    { isHit: false },
+    { isHit: false },
+    { isHit: false },
   ])
   expect(hitboxes5).toEqual([
-    { hit: false },
-    { hit: false },
-    { hit: false },
-    { hit: false },
-    { hit: false },
+    { isHit: false },
+    { isHit: false },
+    { isHit: false },
+    { isHit: false },
+    { isHit: false },
   ])
+  */
 })
 
 test("Ship is not sunk when it is created", () => {
@@ -71,7 +82,7 @@ test("cannot reassign individual hitboxes", () => {
 
   Ship.hitboxes[0] = []
 
-  expect(Ship.hitboxes[0]).toEqual({ hit: false })
+  expect(Ship.hitboxes[0]).not.toEqual([])
 })
 
 test("cannot reassing individial hitbox values", () => {
@@ -80,23 +91,31 @@ test("cannot reassing individial hitbox values", () => {
   Ship.hitboxes[0].hit = true
   Ship.hitboxes[0].newValue = "new value!"
 
-  expect(Ship.hitboxes[0].hit).toEqual(false)
+  expect(Ship.hitboxes[0].isHit).toEqual(false)
 })
 
 test("hit method can reassign hitbox values", () => {
   const Ship = ShipFactory(2)
 
-  expect(Ship.hit(0)).toEqual([{ hit: true }, { hit: false }])
-  expect(Ship.hitboxes).toEqual([{ hit: true }, { hit: false }])
-  expect(Ship.hit(1)).toEqual([{ hit: true }, { hit: true }])
-  expect(Ship.hitboxes).toEqual([{ hit: true }, { hit: true }])
+  Ship.hitboxes[0].hit()
+  expect(Ship.hitboxes[0].isHit).toBe(true)
+  Ship.hitboxes[1].hit()
+  expect(Ship.hitboxes[1].isHit).toBe(true)
+  /*
+  expect(Ship.hit(0)).toEqual([{ isHit: true }, { isHit: false }])
+  expect(Ship.hitboxes).toEqual([{ isHit: true }, { isHit: false }])
+  expect(Ship.hit(1)).toEqual([{ isHit: true }, { isHit: true }])
+  expect(Ship.hitboxes).toEqual([{ isHit: true }, { isHit: true }])
+  */
 })
 
 test("isSunk getter returns true when all hitboxes 'hit' values are true", () => {
   const Ship = ShipFactory(2)
   expect(Ship.isSunk).toBe(false)
-  expect(Ship.hit(0)).toEqual([{ hit: true }, { hit: false }])
+  Ship.hitboxes[0].hit()
+  expect(Ship.hitboxes[0].isHit).toEqual(true)
   expect(Ship.isSunk).toBe(false)
-  expect(Ship.hit(1)).toEqual([{ hit: true }, { hit: true }])
+  Ship.hitboxes[1].hit()
+  expect(Ship.hitboxes[1].isHit).toEqual(true)
   expect(Ship.isSunk).toBe(true)
 })

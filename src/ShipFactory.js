@@ -6,14 +6,21 @@ export default function ShipFactory(length) {
   function _createHitboxes() {
     const array = []
     for (let i = 0; i < length; i++) {
-      array.push({ hit: false })
+      array.push({
+        isHit: false,
+        hit: function () {
+          hit(i)
+        },
+      })
     }
     return array
   }
 
+  // hit: function() {_hit(i)}
+
   function hit(index) {
     if (index >= hitboxes.length || index < 0) return
-    hitboxes[index].hit = true
+    hitboxes[index].isHit = true
     return [...hitboxes]
   }
 
@@ -24,12 +31,11 @@ export default function ShipFactory(length) {
       })
     },
     get isSunk() {
-      if (hitboxes.every((hitbox) => hitbox.hit === true)) {
+      if (hitboxes.every((hitbox) => hitbox.isHit === true)) {
         return true
       } else {
         return false
       }
     },
-    hit,
   }
 }
