@@ -8,20 +8,18 @@ export default function ShipFactory(length) {
     for (let i = 0; i < length; i++) {
       array.push({
         isHit: false,
-        hit: function () {
-          hit(i)
-        },
+        hit: () => hit(i),
       })
     }
     return array
   }
 
-  // hit: function() {_hit(i)}
-
   function hit(index) {
     if (index >= hitboxes.length || index < 0) return
     hitboxes[index].isHit = true
-    return [...hitboxes]
+    return hitboxes.map((hitbox) => {
+      return { ...hitbox }
+    })
   }
 
   return {
