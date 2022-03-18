@@ -1,4 +1,5 @@
 import ShipFactory from "./ShipFactory"
+import TargetFactory from "./TargetFactory"
 
 export default function BoardFactory() {
   const ships = {
@@ -98,21 +99,27 @@ export default function BoardFactory() {
         shipArea.push(
           char + (num - 1),
           char + (num - 2),
+          goodCoords,
           char + (num + 1),
           char + (num + 2)
         )
       }
 
       if (shipLength === 4) {
-        shipArea.push(char + (num - 1), char + (num + 1), char + (num + 2))
+        shipArea.push(
+          char + (num - 1),
+          goodCoords,
+          char + (num + 1),
+          char + (num + 2)
+        )
       }
 
       if (shipLength === 3) {
-        shipArea.push(char + (num - 1), char + (num + 1))
+        shipArea.push(char + (num - 1), goodCoords, char + (num + 1))
       }
 
       if (shipLength === 2) {
-        shipArea.push(char + (num + 1))
+        shipArea.push(goodCoords, char + (num + 1))
       }
     }
 
@@ -122,6 +129,7 @@ export default function BoardFactory() {
         shipArea.push(
           letters[letters.indexOf(char) - 1] + num,
           letters[letters.indexOf(char) - 2] + num,
+          goodCoords,
           letters[letters.indexOf(char) + 1] + num,
           letters[letters.indexOf(char) + 2] + num
         )
@@ -130,6 +138,7 @@ export default function BoardFactory() {
       if (shipLength === 4) {
         shipArea.push(
           letters[letters.indexOf(char) - 1] + num,
+          goodCoords,
           letters[letters.indexOf(char) + 1] + num,
           letters[letters.indexOf(char) + 2] + num
         )
@@ -138,17 +147,19 @@ export default function BoardFactory() {
       if (shipLength === 3) {
         shipArea.push(
           letters[letters.indexOf(char) - 1] + num,
+          goodCoords,
           letters[letters.indexOf(char) + 1] + num
         )
       }
 
       if (shipLength === 2) {
-        shipArea.push(letters[letters.indexOf(char) + 1] + num)
+        shipArea.push(goodCoords, letters[letters.indexOf(char) + 1] + num)
       }
     }
 
     return shipArea
   }
+
   function _collisionCheck(shipLength, goodCoords, orientation) {
     // designed to accept coords that are NOT invalid, filter coords against the
     // array _findInvalidCoords() returns before passing them into this function
@@ -187,7 +198,7 @@ export default function BoardFactory() {
       }
 
       if (shipLength === 2) {
-        shipArea.push(board[char + (num + 1)])
+        shipArea.push(board[goodCoords], board[char + (num + 1)])
       }
     }
 
@@ -289,17 +300,53 @@ export default function BoardFactory() {
       return false // return false - ship cannot be placed there
     } else if (_checkPlacement(ship, coords, orientation)) {
       placedShips.push(remainingShips.splice(shipIndex, 1)[0])
+      const targets = TargetFactory(ships[ship])
+      const shipIndexes = _findShipIndexes(
+        ships[ship].hitboxes.length,
+        coords,
+        orientation
+      )
+
+      for (let i = 0; i < targets.length; i++) {
+        board[shipIndexes[i]] = targets[i]
+      }
+
       return true // return true, ship placed
     } else {
       return false
     }
   }
 
-  function recieveAttack() {}
+  function recieveAttack(coords) {
+    if (typeof board[coords] === "object" && !board[coords].isHit) {
+      board[coords].hit()
+      return 1
+    } else if (board[coords] === "") {
+      board[coords] = "miss"
+      return 0
+    } else if (typeof board[coords] === "object" && board[coords].isHit) {
+      return -1
+    } else if (board[coords] === "miss") {
+      return -1
+    }
+
+    // hit 1, miss 0, already hit -1
+  }
 
   return {
     get board() {
-      return { ...board }
+      const newBoard = {}
+      for (const key in board) {
+        if (typeof board[key] === "string") {
+          newBoard[key] = board[key]
+        } else if (typeof board[key] === "object" && !board[key].isHit) {
+          newBoard[key] = ""
+        } else if (typeof board[key] === "object" && board[key].isHit) {
+          newBoard[key] = "hit"
+        }
+      }
+
+      return newBoard
     },
     get remainingShips() {
       return [...remainingShips]
@@ -308,7 +355,9 @@ export default function BoardFactory() {
       // untested
       if (
         Object.values(ships).every((ship) => {
-          return Object.values(ship.hitboxes).every((hitbox) => hitbox === true)
+          return Object.values(ship.hitboxes).every(
+            (hitbox) => hitbox.isHit === true
+          )
         })
       ) {
         return true

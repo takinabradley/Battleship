@@ -2,9 +2,12 @@ import BoardFactory from "./BoardFactory"
 
 /* global test, expect, describe, beforeEach */
 
-test("returns an object with board and remainingShips property", () => {
+test("returns an object with board,remainingShips, placeShip, recieveAttack, and allShipsSunk properties", () => {
   expect(BoardFactory()).toHaveProperty("board")
   expect(BoardFactory()).toHaveProperty("remainingShips")
+  expect(BoardFactory()).toHaveProperty("placeShip")
+  expect(BoardFactory()).toHaveProperty("recieveAttack")
+  expect(BoardFactory()).toHaveProperty("allShipsSunk")
 })
 
 test("board has properties from from A1-J10 ", () => {
@@ -305,7 +308,76 @@ describe("placeShips can only place ships on valid positions of the board", () =
 })
 
 test("placeShip cannot place ships on top of other ships", () => {
-  // have to actually set objects in the board values now
+  const Gameboard = BoardFactory()
+
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
+  expect(Gameboard.placeShip("battleship", "A3", "horizontal")).toBe(false)
+  expect(Gameboard.placeShip("battleship", "A4", "horizontal")).toBe(false)
+  expect(Gameboard.placeShip("battleship", "A5", "horizontal")).toBe(false)
+  expect(Gameboard.placeShip("battleship", "A6", "horizontal")).toBe(false)
+  expect(Gameboard.placeShip("battleship", "A7", "horizontal")).toBe(true)
+
+  expect(Gameboard.placeShip("cruiser", "B10", "vertical")).toBe(true)
+  expect(Gameboard.placeShip("submarine", "B10", "vertical")).toBe(false)
+  expect(Gameboard.placeShip("submarine", "C10", "vertical")).toBe(false)
+  expect(Gameboard.placeShip("submarine", "D10", "vertical")).toBe(false)
+  expect(Gameboard.placeShip("submarine", "E10", "vertical")).toBe(true)
+
+  expect(Gameboard.placeShip("destroyer", "F10", "vertical")).toBe(false)
+  expect(Gameboard.placeShip("destroyer", "G10", "vertical")).toBe(true)
 })
 
-test("placeShip adds hitboxes for the ship to the board", () => {})
+test("recieveAttack returns 1 on a hit, 0 on a miss, and -1 if space has already been attacked", () => {
+  const Gameboard = BoardFactory()
+  Gameboard.placeShip("carrier", "A3", "horizontal")
+  expect(Gameboard.recieveAttack("A1")).toBe(1)
+  expect(Gameboard.recieveAttack("A2")).toBe(1)
+  expect(Gameboard.recieveAttack("A3")).toBe(1)
+  expect(Gameboard.recieveAttack("A4")).toBe(1)
+  expect(Gameboard.recieveAttack("A5")).toBe(1)
+  expect(Gameboard.recieveAttack("A5")).toBe(-1)
+  expect(Gameboard.recieveAttack("A6")).toBe(0)
+  expect(Gameboard.recieveAttack("A6")).toBe(-1)
+})
+
+test("Gameboard.board shows hits and misses", () => {
+  const Gameboard = BoardFactory()
+  Gameboard.placeShip("carrier", "A3", "horizontal")
+  expect(Gameboard.recieveAttack("A1")).toBe(1)
+  expect(Gameboard.recieveAttack("A2")).toBe(1)
+  expect(Gameboard.recieveAttack("A3")).toBe(1)
+  expect(Gameboard.recieveAttack("A4")).toBe(1)
+  expect(Gameboard.recieveAttack("A5")).toBe(1)
+  expect(Gameboard.recieveAttack("A5")).toBe(-1)
+  expect(Gameboard.recieveAttack("A6")).toBe(0)
+  expect(Gameboard.recieveAttack("A6")).toBe(-1)
+
+  expect(Gameboard.board.A1).toBe("hit")
+  expect(Gameboard.board.A2).toBe("hit")
+  expect(Gameboard.board.A3).toBe("hit")
+  expect(Gameboard.board.A4).toBe("hit")
+  expect(Gameboard.board.A5).toBe("hit")
+  expect(Gameboard.board.A6).toBe("miss")
+})
+
+test("Gameboard.allShipsSunk returns true when all ships are sunk", () => {
+  const Gameboard = BoardFactory()
+  const chars = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+
+  expect(Gameboard.allShipsSunk).toBe(false)
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
+  expect(Gameboard.placeShip("battleship", "A7", "horizontal")).toBe(true)
+  expect(Gameboard.placeShip("cruiser", "B10", "vertical")).toBe(true)
+  expect(Gameboard.placeShip("submarine", "E10", "vertical")).toBe(true)
+  expect(Gameboard.placeShip("destroyer", "G10", "vertical")).toBe(true)
+
+  Gameboard.recieveAttack("A1")
+  for (let i = 0; i < 10; i++) {
+    Gameboard.recieveAttack("A" + i)
+  }
+
+  for (let i = 0; i < 10; i++) {
+    Gameboard.recieveAttack(chars[i] + 10)
+  }
+  expect(Gameboard.allShipsSunk).toBe(true)
+})
