@@ -51,22 +51,22 @@ test("placeShip removes ship from remainingShips array", () => {
   ])
 })
 
-test("placeship returns undefined if coords don't exist", () => {
+test("placeship returns false if coords don't exist", () => {
   const Gameboard = BoardFactory()
-  expect(Gameboard.placeShip("carrier", "A0", "horizontal")).toBeUndefined()
-  expect(Gameboard.placeShip("cruiser", "K15", "vertical")).toBeUndefined()
+  expect(Gameboard.placeShip("carrier", "A0", "horizontal")).toBe(false)
+  expect(Gameboard.placeShip("cruiser", "K15", "vertical")).toBe(false)
 })
 
-test("placeship returns undefined if ship doesn't exist", () => {
+test("placeship returns false if ship doesn't exist", () => {
   const Gameboard = BoardFactory()
-  expect(Gameboard.placeShip("kerberer", "A1", "horizontal")).toBeUndefined()
-  expect(Gameboard.placeShip("platofrakaan", "B10", "vertical")).toBeUndefined()
+  expect(Gameboard.placeShip("kerberer", "A1", "horizontal")).toBe(false)
+  expect(Gameboard.placeShip("platofrakaan", "B10", "vertical")).toBe(false)
 })
 
-test("placeship returns undefined if horizontal or vertical isn't passed", () => {
+test("placeship returns false if horizontal or vertical isn't passed", () => {
   const Gameboard = BoardFactory()
-  expect(Gameboard.placeShip("carrier", "A1", "updown")).toBeUndefined()
-  expect(Gameboard.placeShip("cruiser", "B10", "leftright")).toBeUndefined()
+  expect(Gameboard.placeShip("carrier", "A1", "updown")).toBe(false)
+  expect(Gameboard.placeShip("cruiser", "B10", "leftright")).toBe(false)
 })
 
 test("placeShip returns false if ship has already been placed", () => {
@@ -389,4 +389,16 @@ test("reset gameboard resets the gameboard", () => {
   expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(false)
   Gameboard.reset()
   expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
+})
+
+test("placeShips can place ships randomly", () => {
+  const gameboard = BoardFactory()
+  for (let i = 0; i < 5; i++) {
+    expect(gameboard.placeShip(null, null, null, true)).toBe(true)
+  }
+  expect(gameboard.placeShip(null, null, null, true)).toBe(false)
+  for (const key in gameboard.board) {
+    gameboard.recieveAttack(key)
+  }
+  expect(gameboard.allShipsSunk).toBe(true)
 })

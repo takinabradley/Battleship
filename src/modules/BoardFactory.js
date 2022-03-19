@@ -284,15 +284,37 @@ export default function BoardFactory() {
     return validMoves
   }
 
-  function placeShip(ship, coords, orientation) {
+  function _placeRandom() {
+    if (remainingShips.length === 0) {
+      return false
+    }
+    const orientations = ["horizontal", "vertical"]
+    const randomOrientation = orientations[Math.floor(Math.random() * 2)]
+    const randomShip =
+      remainingShips[Math.floor(Math.random() * remainingShips.length)]
+    const validCoords = _findValidCoords(
+      ships[randomShip].hitboxes.length,
+      randomOrientation
+    )
+    const randomValidCoords =
+      validCoords[Math.floor(Math.random() * validCoords.length)]
+    placeShip(randomShip, randomValidCoords, randomOrientation)
+    return true
+  }
+
+  function placeShip(ship, coords, orientation, random = false) {
     // return undefined - failed to place ship
+    if (random === true) {
+      return _placeRandom()
+    }
+
     if (
       [ship, coords, orientation].some((arg) => arg === undefined) ||
       !Object.keys(ships).includes(ship.toLowerCase()) ||
       !Object.keys(board).includes(coords.toUpperCase()) ||
       (orientation !== "vertical" && orientation !== "horizontal")
     ) {
-      return
+      return false
     }
 
     const shipIndex = remainingShips.indexOf(ship)
