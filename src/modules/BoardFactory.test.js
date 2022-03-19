@@ -381,3 +381,12 @@ test("Gameboard.allShipsSunk returns true when all ships are sunk", () => {
   }
   expect(Gameboard.allShipsSunk).toBe(true)
 })
+
+test("reset gameboard resets the gameboard", () => {
+  const Gameboard = BoardFactory()
+
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(false)
+  Gameboard.reset()
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
+})

@@ -10,9 +10,9 @@ export default function BoardFactory() {
     destroyer: ShipFactory(2),
   }
   // boards start out without ships placed
-  const remainingShips = Object.keys(ships)
+  let remainingShips = Object.keys(ships)
   // when all ships are placed, recieveAttack should be available
-  const placedShips = []
+  let placedShips = []
 
   // prettier-ignore
   const board = {
@@ -333,6 +333,21 @@ export default function BoardFactory() {
     // hit 1, miss 0, already hit -1
   }
 
+  function reset() {
+    for (const key in board) {
+      board[key] = ""
+    }
+
+    ships.carrier = ShipFactory(5)
+    ships.battleship = ShipFactory(4)
+    ships.cruiser = ShipFactory(3)
+    ships.submarine = ShipFactory(3)
+    ships.destroyer = ShipFactory(2)
+
+    remainingShips = Object.keys(ships)
+    placedShips = []
+  }
+
   return {
     get board() {
       const newBoard = {}
@@ -367,6 +382,7 @@ export default function BoardFactory() {
     },
     placeShip,
     recieveAttack,
+    reset,
   }
 }
 
@@ -397,56 +413,3 @@ export default function BoardFactory() {
     return center
   }
   */
-
-/* This will create an object always in sync with the carrier object's hitboxes
-  const carrierTargets = [
-    {
-      get target0() {
-        return carrier.hitboxes[0]
-      },
-      hit: function hit() {carrier.hit(0)}
-    },
-    {
-      get target1() {
-        return carrier.hitboxes[1]
-      },
-    },
-    {
-      get target2() {
-        return carrier.hitboxes[2]
-      },
-    },
-    {
-      get target3() {
-        return carrier.hitboxes[3]
-      },
-    },
-    {
-      get target4() {
-        return carrier.hitboxes[4]
-      },
-    },
-  ]
-  */
-
-// const coords = Object.keys(board)
-
-// if(position is true or false) return 'already hit'
-
-// use indexOf('E5') in recieveAttack() to find the index to actually hit on
-// the board?
-
-// shipCoords = ["A10", "J5", "A1"]
-
-// Ship = [{false}, {false}, {false}]
-// board[5] = ship[0]
-// board[6] = ship[1]
-// board[7] = ship[2]
-// any changes to those board spaces should change in the ship as well?
-/*
-Gameboard = {
-  board,
-  placeShip(), //uses ship factory to place ships - maybe is the ship factory itself?
-  recieveAttack() //all ships must be placed before an attack
-}
-*/
