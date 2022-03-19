@@ -22,7 +22,7 @@ export default function ShipFactory(length) {
     })
   }
 
-  return {
+  return Object.freeze({
     get hitboxes() {
       return hitboxes.map((hitbox) => {
         return { ...hitbox }
@@ -35,5 +35,5 @@ export default function ShipFactory(length) {
         return false
       }
     },
-  }
+  })
 }

@@ -348,7 +348,7 @@ export default function BoardFactory() {
     placedShips = []
   }
 
-  return {
+  return Object.freeze({
     get board() {
       const newBoard = {}
       for (const key in board) {
@@ -383,7 +383,7 @@ export default function BoardFactory() {
     placeShip,
     recieveAttack,
     reset,
-  }
+  })
 }
 
 // gameboards need to be able to place ships at specific coordinates
