@@ -1,16 +1,19 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { template } = require('@babel/core')
 
 module.exports = {
   mode: 'development',
   entry: './src/index.js',
   devtool: 'inline-source-map',
   devServer: {
-    static: './dist'
+    static: './dist',
+    hot: false
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'BattleShip'
+      title: 'BattleShip',
+      template: './src/index.html'
     })
   ],
   output: {
