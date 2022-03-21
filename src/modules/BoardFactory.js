@@ -286,7 +286,7 @@ export default function BoardFactory() {
 
   function _placeRandom() {
     if (remainingShips.length === 0) {
-      return false
+      return []
     }
     const orientations = ["horizontal", "vertical"]
     const randomOrientation = orientations[Math.floor(Math.random() * 2)]
@@ -298,8 +298,7 @@ export default function BoardFactory() {
     )
     const randomValidCoords =
       validCoords[Math.floor(Math.random() * validCoords.length)]
-    placeShip(randomShip, randomValidCoords, randomOrientation)
-    return true
+    return placeShip(randomShip, randomValidCoords, randomOrientation)
   }
 
   function placeShip(ship, coords, orientation, random = false) {
@@ -314,12 +313,12 @@ export default function BoardFactory() {
       !Object.keys(board).includes(coords.toUpperCase()) ||
       (orientation !== "vertical" && orientation !== "horizontal")
     ) {
-      return false
+      return []
     }
 
     const shipIndex = remainingShips.indexOf(ship)
     if (shipIndex === -1) {
-      return false // return false - ship cannot be placed there
+      return [] // return false - ship cannot be placed there
     } else if (_checkPlacement(ship, coords, orientation)) {
       placedShips.push(remainingShips.splice(shipIndex, 1)[0])
       const targets = TargetFactory(ships[ship])
@@ -333,9 +332,9 @@ export default function BoardFactory() {
         board[shipIndexes[i]] = targets[i]
       }
 
-      return true // return true, ship placed
+      return shipIndexes // ship placed
     } else {
-      return false
+      return []
     }
   }
 

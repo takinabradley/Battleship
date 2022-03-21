@@ -51,28 +51,32 @@ test("placeShip removes ship from remainingShips array", () => {
   ])
 })
 
-test("placeship returns false if coords don't exist", () => {
+test("placeship returns empty array if coords don't exist", () => {
   const Gameboard = BoardFactory()
-  expect(Gameboard.placeShip("carrier", "A0", "horizontal")).toBe(false)
-  expect(Gameboard.placeShip("cruiser", "K15", "vertical")).toBe(false)
+  expect(Gameboard.placeShip("carrier", "A0", "horizontal")).toEqual([])
+  expect(Gameboard.placeShip("cruiser", "K15", "vertical")).toEqual([])
 })
 
-test("placeship returns false if ship doesn't exist", () => {
+test("placeship returns empty array if ship doesn't exist", () => {
   const Gameboard = BoardFactory()
-  expect(Gameboard.placeShip("kerberer", "A1", "horizontal")).toBe(false)
-  expect(Gameboard.placeShip("platofrakaan", "B10", "vertical")).toBe(false)
+  expect(Gameboard.placeShip("kerberer", "A1", "horizontal")).toEqual([])
+  expect(Gameboard.placeShip("platofrakaan", "B10", "vertical")).toEqual([])
 })
 
-test("placeship returns false if horizontal or vertical isn't passed", () => {
+test("placeship returns empty array if horizontal or vertical isn't passed", () => {
   const Gameboard = BoardFactory()
-  expect(Gameboard.placeShip("carrier", "A1", "updown")).toBe(false)
-  expect(Gameboard.placeShip("cruiser", "B10", "leftright")).toBe(false)
+  expect(Gameboard.placeShip("carrier", "A1", "updown")).toEqual([])
+  expect(Gameboard.placeShip("cruiser", "B10", "leftright")).toEqual([])
 })
 
-test("placeShip returns false if ship has already been placed", () => {
+test("placeShip returns empty array if ship has already been placed", () => {
   const Gameboard = BoardFactory()
 
-  expect(Gameboard.placeShip("cruiser", "B1", "vertical")).toBe(true)
+  expect(Gameboard.placeShip("cruiser", "B1", "vertical")).toEqual([
+    "A1",
+    "B1",
+    "C1",
+  ])
   expect(Gameboard.remainingShips).toEqual([
     "carrier",
     "battleship",
@@ -80,7 +84,7 @@ test("placeShip returns false if ship has already been placed", () => {
     "destroyer",
   ])
 
-  expect(Gameboard.placeShip("cruiser", "B1", "vertical")).toBe(false)
+  expect(Gameboard.placeShip("cruiser", "B1", "vertical")).toEqual([])
   expect(Gameboard.remainingShips).toEqual([
     "carrier",
     "battleship",
@@ -97,63 +101,64 @@ describe("placeShips can only place ships on valid positions of the board", () =
   beforeEach(() => (array.length = 0))
 
   test("carrier cannot be placed at 1, 2, 9, or 10 horizontally", () => {
-    expect(Gameboard.placeShip("carrier", "A1", "horizontal")).toBe(false)
-    expect(Gameboard.placeShip("carrier", "B2", "horizontal")).toBe(false)
-    expect(Gameboard.placeShip("carrier", "I9", "horizontal")).toBe(false)
-    expect(Gameboard.placeShip("carrier", "J10", "horizontal")).toBe(false)
+    expect(Gameboard.placeShip("carrier", "A1", "horizontal")).toEqual([])
+    expect(Gameboard.placeShip("carrier", "B2", "horizontal")).toEqual([])
+    expect(Gameboard.placeShip("carrier", "I9", "horizontal")).toEqual([])
+    expect(Gameboard.placeShip("carrier", "J10", "horizontal")).toEqual([])
   })
+
   test("carrier can be placed ar or between 3 and 8 horizontally", () => {
     for (let i = 3; i <= 8; i++) {
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("carrier", "A" + i, "horizontal"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(false)
   })
 
   test("battleship cannot be placed at 1, 9, or 10 horizontally", () => {
-    expect(Gameboard.placeShip("battleship", "C1", "horizontal")).toBe(false)
-    expect(Gameboard.placeShip("battleship", "G9", "horizontal")).toBe(false)
-    expect(Gameboard.placeShip("battleship", "H10", "horizontal")).toBe(false)
+    expect(Gameboard.placeShip("battleship", "C1", "horizontal")).toEqual([])
+    expect(Gameboard.placeShip("battleship", "G9", "horizontal")).toEqual([])
+    expect(Gameboard.placeShip("battleship", "H10", "horizontal")).toEqual([])
   })
   test("battleship can be placed at or between 2 and 8 horizontally", () => {
     for (let i = 2; i <= 8; i++) {
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("battleship", "B" + i, "horizontal"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(false)
   })
 
   test("cruiser and submarine cannot be placed at 1 or 10 horizontally", () => {
-    expect(Gameboard.placeShip("cruiser", "D1", "horizontal")).toBe(false)
-    expect(Gameboard.placeShip("cruiser", "F10", "horizontal")).toBe(false)
+    expect(Gameboard.placeShip("cruiser", "D1", "horizontal")).toEqual([])
+    expect(Gameboard.placeShip("cruiser", "F10", "horizontal")).toEqual([])
 
-    expect(Gameboard.placeShip("submarine", "E1", "horizontal")).toBe(false)
-    expect(Gameboard.placeShip("submarine", "G10", "horizontal")).toBe(false)
+    expect(Gameboard.placeShip("submarine", "E1", "horizontal")).toEqual([])
+    expect(Gameboard.placeShip("submarine", "G10", "horizontal")).toEqual([])
   })
   test("cruiser and submarine can be placed at or between 2 and 9 horizontally", () => {
     for (let i = 2; i <= 9; i++) {
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("cruiser", "C" + i, "horizontal"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(false)
 
     const array2 = []
     for (let i = 2; i <= 9; i++) {
       Gameboard = BoardFactory()
       array2.push(Gameboard.placeShip("submarine", "D" + i, "horizontal"))
     }
-    expect(array2.every((value) => value === true)).toBe(true)
+    expect(array2.every((value) => value.length === 0)).toBe(false)
   })
 
   test("destroyer cannot be placed at 10 horizontally", () => {
-    expect(Gameboard.placeShip("destroyer", "H10", "horizontal")).toBe(false)
+    expect(Gameboard.placeShip("destroyer", "H10", "horizontal")).toEqual([])
   })
   test("destroyer can be placed at or between 1 and 9 horizontally", () => {
     for (let i = 1; i <= 9; i++) {
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("destroyer", "E" + i, "horizontal"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(false)
   })
 
   // now I have to do vertical tests, blegh
@@ -169,7 +174,7 @@ describe("placeShips can only place ships on valid positions of the board", () =
       array.push(Gameboard.placeShip("carrier", "J" + i, "vertical"))
     }
 
-    expect(array.every((value) => value === false)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(true)
   })
   test("carrier can be placed at or between C and H vertically", () => {
     for (let i = 1; i <= 10; i++) {
@@ -186,7 +191,7 @@ describe("placeShips can only place ships on valid positions of the board", () =
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("carrier", "H" + i, "vertical"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length > 0)).toBe(true)
   })
 
   test("battleship cannot be placed at A, I, or J vertically", () => {
@@ -199,7 +204,7 @@ describe("placeShips can only place ships on valid positions of the board", () =
       array.push(Gameboard.placeShip("battleship", "J" + i, "vertical"))
     }
 
-    expect(array.every((value) => value === false)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(true)
   })
   test("battleship can be placed at or between B and H vertically", () => {
     for (let i = 1; i <= 10; i++) {
@@ -218,7 +223,7 @@ describe("placeShips can only place ships on valid positions of the board", () =
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("battleship", "H" + i, "vertical"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length > 0)).toBe(true)
   })
 
   test("cruiser and submarine cannot be placed at A or J vertically", () => {
@@ -233,7 +238,7 @@ describe("placeShips can only place ships on valid positions of the board", () =
       array.push(Gameboard.placeShip("cruiser", "J" + i, "vertical"))
     }
 
-    expect(array.every((value) => value === false)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(true)
   })
   test("cruiser and submarine can be placed at or between B and I vertically", () => {
     for (let i = 1; i <= 10; i++) {
@@ -271,7 +276,7 @@ describe("placeShips can only place ships on valid positions of the board", () =
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("submarine", "I" + i, "vertical"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length > 0)).toBe(true)
   })
 
   test("destroyer cannot be placed at J vertically", () => {
@@ -280,7 +285,7 @@ describe("placeShips can only place ships on valid positions of the board", () =
       array.push(Gameboard.placeShip("cruiser", "J" + i, "vertical"))
     }
 
-    expect(array.every((value) => value === false)).toBe(true)
+    expect(array.every((value) => value.length === 0)).toBe(true)
   })
   test("destroyer can be placed at or between A and I vertically", () => {
     for (let i = 1; i <= 10; i++) {
@@ -303,28 +308,50 @@ describe("placeShips can only place ships on valid positions of the board", () =
       Gameboard = BoardFactory()
       array.push(Gameboard.placeShip("destroyer", "I" + i, "vertical"))
     }
-    expect(array.every((value) => value === true)).toBe(true)
+    expect(array.every((value) => value.length > 0)).toBe(true)
   })
 })
 
 test("placeShip cannot place ships on top of other ships", () => {
   const Gameboard = BoardFactory()
 
-  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
-  expect(Gameboard.placeShip("battleship", "A3", "horizontal")).toBe(false)
-  expect(Gameboard.placeShip("battleship", "A4", "horizontal")).toBe(false)
-  expect(Gameboard.placeShip("battleship", "A5", "horizontal")).toBe(false)
-  expect(Gameboard.placeShip("battleship", "A6", "horizontal")).toBe(false)
-  expect(Gameboard.placeShip("battleship", "A7", "horizontal")).toBe(true)
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toEqual([
+    "A2",
+    "A1",
+    "A3",
+    "A4",
+    "A5",
+  ])
+  expect(Gameboard.placeShip("battleship", "A3", "horizontal")).toEqual([])
+  expect(Gameboard.placeShip("battleship", "A4", "horizontal")).toEqual([])
+  expect(Gameboard.placeShip("battleship", "A5", "horizontal")).toEqual([])
+  expect(Gameboard.placeShip("battleship", "A6", "horizontal")).toEqual([])
+  expect(Gameboard.placeShip("battleship", "A7", "horizontal")).toEqual([
+    "A6",
+    "A7",
+    "A8",
+    "A9",
+  ])
 
-  expect(Gameboard.placeShip("cruiser", "B10", "vertical")).toBe(true)
-  expect(Gameboard.placeShip("submarine", "B10", "vertical")).toBe(false)
-  expect(Gameboard.placeShip("submarine", "C10", "vertical")).toBe(false)
-  expect(Gameboard.placeShip("submarine", "D10", "vertical")).toBe(false)
-  expect(Gameboard.placeShip("submarine", "E10", "vertical")).toBe(true)
+  expect(Gameboard.placeShip("cruiser", "B10", "vertical")).toEqual([
+    "A10",
+    "B10",
+    "C10",
+  ])
+  expect(Gameboard.placeShip("submarine", "B10", "vertical")).toEqual([])
+  expect(Gameboard.placeShip("submarine", "C10", "vertical")).toEqual([])
+  expect(Gameboard.placeShip("submarine", "D10", "vertical")).toEqual([])
+  expect(Gameboard.placeShip("submarine", "E10", "vertical")).toEqual([
+    "D10",
+    "E10",
+    "F10",
+  ])
 
-  expect(Gameboard.placeShip("destroyer", "F10", "vertical")).toBe(false)
-  expect(Gameboard.placeShip("destroyer", "G10", "vertical")).toBe(true)
+  expect(Gameboard.placeShip("destroyer", "F10", "vertical")).toEqual([])
+  expect(Gameboard.placeShip("destroyer", "G10", "vertical")).toEqual([
+    "G10",
+    "H10",
+  ])
 })
 
 test("recieveAttack returns 1 on a hit, 0 on a miss, and -1 if space has already been attacked", () => {
@@ -365,11 +392,11 @@ test("Gameboard.allShipsSunk returns true when all ships are sunk", () => {
   const chars = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
   expect(Gameboard.allShipsSunk).toBe(false)
-  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
-  expect(Gameboard.placeShip("battleship", "A7", "horizontal")).toBe(true)
-  expect(Gameboard.placeShip("cruiser", "B10", "vertical")).toBe(true)
-  expect(Gameboard.placeShip("submarine", "E10", "vertical")).toBe(true)
-  expect(Gameboard.placeShip("destroyer", "G10", "vertical")).toBe(true)
+  Gameboard.placeShip("carrier", "A3", "horizontal")
+  Gameboard.placeShip("battleship", "A7", "horizontal")
+  Gameboard.placeShip("cruiser", "B10", "vertical")
+  Gameboard.placeShip("submarine", "E10", "vertical")
+  Gameboard.placeShip("destroyer", "G10", "vertical")
 
   Gameboard.recieveAttack("A1")
   for (let i = 0; i < 10; i++) {
@@ -385,18 +412,20 @@ test("Gameboard.allShipsSunk returns true when all ships are sunk", () => {
 test("reset gameboard resets the gameboard", () => {
   const Gameboard = BoardFactory()
 
-  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
-  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(false)
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal").length).toBe(5)
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toEqual([])
   Gameboard.reset()
-  expect(Gameboard.placeShip("carrier", "A3", "horizontal")).toBe(true)
+  expect(Gameboard.placeShip("carrier", "A3", "horizontal").length).toBe(5)
 })
 
 test("placeShips can place ships randomly", () => {
   const gameboard = BoardFactory()
   for (let i = 0; i < 5; i++) {
-    expect(gameboard.placeShip(null, null, null, true)).toBe(true)
+    expect(gameboard.placeShip(null, null, null, true).length).toBeGreaterThan(
+      0
+    )
   }
-  expect(gameboard.placeShip(null, null, null, true)).toBe(false)
+  expect(gameboard.placeShip(null, null, null, true)).toEqual([])
   for (const key in gameboard.board) {
     gameboard.recieveAttack(key)
   }
