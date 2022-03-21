@@ -1,5 +1,4 @@
 import ShipFactory from "./ShipFactory"
-import TargetFactory from "./TargetFactory"
 
 export default function BoardFactory() {
   const ships = {
@@ -321,17 +320,15 @@ export default function BoardFactory() {
       return [] // return false - ship cannot be placed there
     } else if (_checkPlacement(ship, coords, orientation)) {
       placedShips.push(remainingShips.splice(shipIndex, 1)[0])
-      const targets = TargetFactory(ships[ship])
       const shipIndexes = _findShipIndexes(
         ships[ship].hitboxes.length,
         coords,
         orientation
       )
 
-      for (let i = 0; i < targets.length; i++) {
-        board[shipIndexes[i]] = targets[i]
+      for (let i = 0; i < ships[ship].hitboxes.length; i++) {
+        board[shipIndexes[i]] = ships[ship].hitboxes[i]
       }
-
       return shipIndexes // ship placed
     } else {
       return []
