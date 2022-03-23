@@ -8,9 +8,9 @@ export default function BoardFactory() {
     submarine: ShipFactory(3),
     destroyer: ShipFactory(2),
   }
-  // boards start out without ships placed
+
+  // boards start out without ships placed, then are moved to placedShips
   let remainingShips = Object.keys(ships)
-  // when all ships are placed, recieveAttack should be available
   let placedShips = []
 
   // prettier-ignore
@@ -85,15 +85,14 @@ export default function BoardFactory() {
   }
 
   function _findShipIndexes(shipLength, goodCoords, orientation) {
+    // designed to accept coords that are NOT invalid, filter coords against the
+    // array _findInvalidCoords() returns before passing them into this function
     const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
     const char = goodCoords.charAt(0)
     const num = Number.parseInt(goodCoords.substring(1))
     const shipArea = []
 
-    // I could probably make this include center if I were to just add
-    // board[char + num] to each
     if (orientation === "horizontal") {
-      // do something with the numbers?
       if (shipLength === 5) {
         shipArea.push(
           char + (num - 1),
@@ -123,7 +122,6 @@ export default function BoardFactory() {
     }
 
     if (orientation === "vertical") {
-      // do something with the letters?
       if (shipLength === 5) {
         shipArea.push(
           letters[letters.indexOf(char) - 1] + num,
@@ -171,10 +169,7 @@ export default function BoardFactory() {
     const shipArea = []
     const isEmpty = (coords) => coords === ""
 
-    // I could probably make this include center if I were to just add
-    // board[char + num] to each
     if (orientation === "horizontal") {
-      // do something with the numbers?
       if (shipLength === 5) {
         shipArea.push(
           board[char + (num - 1)],
@@ -202,7 +197,6 @@ export default function BoardFactory() {
     }
 
     if (orientation === "vertical") {
-      // do something with the letters?
       if (shipLength === 5) {
         shipArea.push(
           board[letters[letters.indexOf(char) - 1] + num],
@@ -240,15 +234,6 @@ export default function BoardFactory() {
   }
 
   function _checkPlacement(ship, coords, orientation) {
-    /*
-    const shipLength = ships[ship].hitboxes.length
-    const invalidCoords = _findInvalidCoords(shipLength, orientation)
-    if (invalidCoords.includes(coords)) return false
-    if (_collisionCheck(shipLength, coords, orientation) === true) return false
-    return true
-    // return false - ship cannot be placed there
-    // return true - valid placement
-    */
     const shipLength = ships[ship].hitboxes.length
     const validCoords = _findValidCoords(shipLength, orientation)
     if (validCoords.includes(coords)) {
@@ -263,7 +248,6 @@ export default function BoardFactory() {
     const validMoves = []
 
     // add any keys that would hit another ship to invalid array
-    //
     for (const key in board) {
       if (
         !invalidArray.includes(key) &&
@@ -301,7 +285,7 @@ export default function BoardFactory() {
   }
 
   function placeShip(ship, coords, orientation, random = false) {
-    // return undefined - failed to place ship
+    // returns array of coords - or an empty array if failed to place
     if (random === true) {
       return _placeRandom()
     }
@@ -329,13 +313,14 @@ export default function BoardFactory() {
       for (let i = 0; i < ships[ship].hitboxes.length; i++) {
         board[shipIndexes[i]] = ships[ship].hitboxes[i]
       }
-      return shipIndexes // ship placed
+      return shipIndexes
     } else {
       return []
     }
   }
 
   function recieveAttack(coords) {
+    // hit 1, miss 0, already hit -1
     if (typeof board[coords] === "object" && !board[coords].isHit) {
       board[coords].hit()
       return 1
@@ -347,8 +332,6 @@ export default function BoardFactory() {
     } else if (board[coords] === "miss") {
       return -1
     }
-
-    // hit 1, miss 0, already hit -1
   }
 
   function reset() {
@@ -385,7 +368,6 @@ export default function BoardFactory() {
       return [...remainingShips]
     },
     get allShipsSunk() {
-      // untested
       if (
         Object.values(ships).every((ship) => {
           return Object.values(ship.hitboxes).every(
@@ -403,31 +385,3 @@ export default function BoardFactory() {
     reset,
   })
 }
-
-// gameboards need to be able to place ships at specific coordinates
-// (by calling the ship factory function?)
-// gameboards should have a recieveattack() function that takes coordinates,
-// determined if a ship was hit a hit or a miss, and send a hit() function
-// to the correct ship
-// gameboards keep track of missed hits to display
-// gameboards should know whether or not all ships have been sunk
-
-/* This might be used for UI later
-  function _findCenterIndex(shipLength) {
-    // placement is determined from center - the median for odd numbers -
-    // or the mean rounded down to an int for even numbers
-    // findCenterIndex() works for numbers up to 5, but I wouldn't trust it to always
-    // find the correct median/mean
-    // 0 1 2 3 4
-    // 0 1 2 3
-    // 0 1 2
-    // 0 1
-    // 1 2 3 4 5
-    let center = 0
-    for (let i = 0; i < shipLength; i++) {
-      center = center + i
-      if (i === shipLength - 1) center = Number.parseInt(center / shipLength)
-    }
-    return center
-  }
-  */

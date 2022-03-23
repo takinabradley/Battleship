@@ -24,16 +24,12 @@ export default function ShipFactory(length) {
 
   return Object.freeze({
     get hitboxes() {
-      return hitboxes.map((hitbox) => {
-        // return { ...hitbox }
-        /* This might make it so I don't need to use TargetFactory */
-        return {
-          get isHit() {
-            return hitbox.isHit
-          },
-          hit: hitbox.hit,
-        }
-      })
+      return hitboxes.map((hitbox) => ({
+        get isHit() {
+          return hitbox.isHit
+        },
+        hit: hitbox.hit,
+      }))
     },
     get isSunk() {
       if (hitboxes.every((hitbox) => hitbox.isHit === true)) {
