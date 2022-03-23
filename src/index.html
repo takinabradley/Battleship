@@ -4,11 +4,139 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
     <title>Battleship</title>
   </head>
   <body>
     <header>
       <h1>Battleship</h1>
     </header>
+
+    <section id="play-area">
+      <div id="board">
+        <div data-key="A1" class="coord"></div>
+        <div data-key="A2" class="coord"></div>
+        <div data-key="A3" class="coord"></div>
+        <div data-key="A4" class="coord"></div>
+        <div data-key="A5" class="coord"></div>
+        <div data-key="A6" class="coord"></div>
+        <div data-key="A7" class="coord"></div>
+        <div data-key="A8" class="coord"></div>
+        <div data-key="A9" class="coord"></div>
+        <div data-key="A10" class="coord"></div>
+
+        <div data-key="B1" class="coord"></div>
+        <div data-key="B2" class="coord"></div>
+        <div data-key="B3" class="coord"></div>
+        <div data-key="B4" class="coord"></div>
+        <div data-key="B5" class="coord"></div>
+        <div data-key="B6" class="coord"></div>
+        <div data-key="B7" class="coord"></div>
+        <div data-key="B8" class="coord"></div>
+        <div data-key="B9" class="coord"></div>
+        <div data-key="B10" class="coord"></div>
+
+        <div data-key="C1" class="coord"></div>
+        <div data-key="C2" class="coord"></div>
+        <div data-key="C3" class="coord"></div>
+        <div data-key="C4" class="coord"></div>
+        <div data-key="C5" class="coord"></div>
+        <div data-key="C6" class="coord"></div>
+        <div data-key="C7" class="coord"></div>
+        <div data-key="C8" class="coord"></div>
+        <div data-key="C9" class="coord"></div>
+        <div data-key="C10" class="coord"></div>
+
+        <div data-key="D1" class="coord"></div>
+        <div data-key="D2" class="coord"></div>
+        <div data-key="D3" class="coord"></div>
+        <div data-key="D4" class="coord"></div>
+        <div data-key="D5" class="coord"></div>
+        <div data-key="D6" class="coord"></div>
+        <div data-key="D7" class="coord"></div>
+        <div data-key="D8" class="coord"></div>
+        <div data-key="D9" class="coord"></div>
+        <div data-key="D10" class="coord"></div>
+
+        <div data-key="E1" class="coord"></div>
+        <div data-key="E2" class="coord"></div>
+        <div data-key="E3" class="coord"></div>
+        <div data-key="E4" class="coord"></div>
+        <div data-key="E5" class="coord"></div>
+        <div data-key="E6" class="coord"></div>
+        <div data-key="E7" class="coord"></div>
+        <div data-key="E8" class="coord"></div>
+        <div data-key="E9" class="coord"></div>
+        <div data-key="E10" class="coord"></div>
+
+        <div data-key="F1" class="coord"></div>
+        <div data-key="F2" class="coord"></div>
+        <div data-key="F3" class="coord"></div>
+        <div data-key="F4" class="coord"></div>
+        <div data-key="F5" class="coord"></div>
+        <div data-key="F6" class="coord"></div>
+        <div data-key="F7" class="coord"></div>
+        <div data-key="F8" class="coord"></div>
+        <div data-key="F9" class="coord"></div>
+        <div data-key="F10" class="coord"></div>
+
+        <div data-key="G1" class="coord"></div>
+        <div data-key="G2" class="coord"></div>
+        <div data-key="G3" class="coord"></div>
+        <div data-key="G4" class="coord"></div>
+        <div data-key="G5" class="coord"></div>
+        <div data-key="G6" class="coord"></div>
+        <div data-key="G7" class="coord"></div>
+        <div data-key="G8" class="coord"></div>
+        <div data-key="G9" class="coord"></div>
+        <div data-key="G10" class="coord"></div>
+
+        <div data-key="H1" class="coord"></div>
+        <div data-key="H2" class="coord"></div>
+        <div data-key="H3" class="coord"></div>
+        <div data-key="H4" class="coord"></div>
+        <div data-key="H5" class="coord"></div>
+        <div data-key="H6" class="coord"></div>
+        <div data-key="H7" class="coord"></div>
+        <div data-key="H8" class="coord"></div>
+        <div data-key="H9" class="coord"></div>
+        <div data-key="H10" class="coord"></div>
+
+        <div data-key="I1" class="coord"></div>
+        <div data-key="I2" class="coord"></div>
+        <div data-key="I3" class="coord"></div>
+        <div data-key="I4" class="coord"></div>
+        <div data-key="I5" class="coord"></div>
+        <div data-key="I6" class="coord"></div>
+        <div data-key="I7" class="coord"></div>
+        <div data-key="I8" class="coord"></div>
+        <div data-key="I9" class="coord"></div>
+        <div data-key="I10" class="coord"></div>
+
+        <div data-key="J1" class="coord"></div>
+        <div data-key="J2" class="coord"></div>
+        <div data-key="J3" class="coord"></div>
+        <div data-key="J4" class="coord"></div>
+        <div data-key="J5" class="coord"></div>
+        <div data-key="J6" class="coord"></div>
+        <div data-key="J7" class="coord"></div>
+        <div data-key="J8" class="coord"></div>
+        <div data-key="J9" class="coord"></div>
+        <div data-key="J10" class="coord"></div>
+      </div>
+
+      <div id="ships">
+        <div class="ship" draggable="true">carrier</div>
+        <div class="ship" draggable="true">battleship</div>
+        <div class="ship" draggable="true">cruiser</div>
+        <div class="ship" draggable="true">submarine</div>
+        <div class="ship" draggable="true">destroyer</div>
+      </div>
+    </section>
+
+    <section class="buttons">
+      <button class="orientation-toggle">horizontal</button>
+      <h2>Buttons n' stuff</h2>
+    </section>
   </body>
 </html>
