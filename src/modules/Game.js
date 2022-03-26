@@ -1,31 +1,43 @@
+import PlayerFactory from "./PlayerFactory"
+
 const Game = (function () {
   let player1
   let player2
+  let currentPlayer
+
+  function start() {
+    const startGame = new CustomEvent("startGame", {
+      bubbles: true,
+      detail: {},
+    })
+
+    document.dispatchEvent(startGame)
+    // DOMController.renderPlayerpage
+  }
+
+  document.addEventListener("Game.init", init)
+  function init(e) {
+    player1 = PlayerFactory(e.detail.player1)
+    player2 = PlayerFactory(e.detail.player2)
+    currentPlayer = player1
+    e.detail.callbackFunc(currentPlayer)
+    // DOMController.renderShipPage
+  }
+
+  document.addEventListener("Game.switchPlayer", switchPlayer)
+  function switchPlayer(e) {
+    if (currentPlayer === player1) {
+      currentPlayer = player2
+    } else if (currentPlayer === player2) {
+      currentPlayer = player1
+    }
+
+    if (e.detail.callbackFunc) e.detail.callbackFunc(currentPlayer)
+    // DOMController.renderShipPage, DOMController.renderHitPage
+  }
 
   return {
-    get player1() {
-      return player1
-    },
-    get player2() {
-      return player2
-    },
-    set player1(playerObj) {
-      if (typeof playerObj !== "object") return
-      player1 = playerObj
-    },
-    set player2(playerObj) {
-      if (typeof playerObj !== "object") return
-      player2 = playerObj
-    },
-    get winner() {
-      if (!player1.gameboard.allShipsSunk && !player2.gameboard.allShipsSunk) {
-        return false
-      } else if (player1.gameboard.allShipsSunk) {
-        return player1
-      } else if (player2.gameboard.allShipsSunk) {
-        return player2
-      }
-    },
+    start,
   }
 })()
 
