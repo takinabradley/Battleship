@@ -20,7 +20,7 @@ const Game = (function () {
     player1 = PlayerFactory(e.detail.player1)
     player2 = PlayerFactory(e.detail.player2)
     currentPlayer = player1
-    e.detail.callbackFunc(currentPlayer)
+    if (e.detail.callbackFunc) e.detail.callbackFunc(currentPlayer)
     // DOMController.renderShipPage
   }
 
