@@ -32,7 +32,13 @@ const Game = (function () {
       currentPlayer = player1
     }
 
-    if (e.detail.callbackFunc) e.detail.callbackFunc(currentPlayer)
+    let nextPlayer
+    if (currentPlayer === player1) {
+      nextPlayer = player2
+    } else if (currentPlayer === player2) {
+      nextPlayer = player1
+    }
+    if (e.detail.callbackFunc) e.detail.callbackFunc(currentPlayer, nextPlayer)
     // DOMController.renderShipPage, DOMController.renderHitPage
   }
 
