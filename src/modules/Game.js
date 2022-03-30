@@ -17,8 +17,8 @@ const Game = (function () {
 
   document.addEventListener("Game.init", init)
   function init(e) {
-    player1 = PlayerFactory(e.detail.player1)
-    player2 = PlayerFactory(e.detail.player2)
+    player1 = PlayerFactory(e.detail.player1, 1)
+    player2 = PlayerFactory(e.detail.player2, 2)
     currentPlayer = player1
     if (e.detail.callbackFunc) e.detail.callbackFunc(currentPlayer)
     // DOMController.renderShipPage

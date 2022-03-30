@@ -53,6 +53,9 @@ test("Game.switchPlayer event can be used to switch players", () => {
   expect(callBack).toBeCalledWith(
     expect.objectContaining({
       name: "may",
+    }),
+    expect.objectContaining({
+      name: "greg",
     })
   )
 })
