@@ -314,6 +314,13 @@ const DOMController = (function () {
       )
 
       if (coordsToHighlight.length > 0) {
+        if (player.playerNum === 1) {
+          player1ShipCoords.push(coordsToHighlight)
+          console.log(player1ShipCoords)
+        } else {
+          player2ShipCoords.push(coordsToHighlight)
+          console.log(player2ShipCoords)
+        }
         highlightCoordsGreen(coordsToHighlight)
         // push to each player's ship coords. Max ships coords === 5
       } else {
@@ -450,10 +457,11 @@ const DOMController = (function () {
       </div>
     </section>
 
+    <button id='board-toggle'>Toggle Board</button>
     <button id='finish-button'>Finish</button>`
 
     highlightHitsAndMisses(player)
-    placeHitListeners(player)
+    placeHitListeners(player, currentPlayer)
     // there should be a toggle view button
 
     // to make the toggle view work, I have to save the coords where the ships
@@ -473,34 +481,87 @@ const DOMController = (function () {
     }
   }
 
-  function placeHitListeners(player) {
-    const hitAbort = new AbortController()
+  function highlightShipsGray(player) {
+    if (player.playerNum === 1) {
+      player1ShipCoords.forEach((shipCoords) => {
+        shipCoords.forEach((hitboxCoord) => {
+          const cell = document.querySelector(
+            `.coord[data-key='${hitboxCoord}']`
+          )
+          cell.style.backgroundColor = "gray"
+        })
+      })
+    } else {
+      player2ShipCoords.forEach((shipCoords) => {
+        shipCoords.forEach((hitboxCoord) => {
+          const cell = document.querySelector(
+            `.coord[data-key='${hitboxCoord}']`
+          )
+          cell.style.backgroundColor = "gray"
+        })
+      })
+    }
+  }
+
+  function placeHitListeners(player, currentPlayer) {
+    const gameboard = document.querySelector("#board")
+    const boardToggle = document.querySelector("#board-toggle")
+    const finishButton = document.querySelector("#finish-button")
+    let hitAbort = new AbortController()
     let hitStatus
 
-    const gameboard = document.querySelector("#board")
-    gameboard.addEventListener(
-      "click",
-      (e) => {
-        // colors cells red (miss) or green (hit) when attacked
-        const dataKey = e.target.getAttribute("data-key")
-        if (dataKey === null) return
+    // allows attacking and colors cells red (miss) or green (hit)
+    const addGameboardListeners = () => {
+      gameboard.addEventListener(
+        "click",
+        (e) => {
+          const dataKey = e.target.getAttribute("data-key")
+          if (dataKey === null) return
 
-        hitStatus = player.gameboard.recieveAttack(dataKey)
-        console.log(hitStatus)
-        if (hitStatus === 0) {
-          e.target.style.backgroundColor = "red"
-          hitAbort.abort()
-        } else if (hitStatus === 1) {
-          hitAbort.abort()
-          e.target.style.backgroundColor = "green"
-        } else {
-          flashCellRed(e)
-        }
-      },
-      { signal: hitAbort.signal }
-    )
+          hitStatus = player.gameboard.recieveAttack(dataKey)
+          console.log(hitStatus)
+          if (hitStatus === 0) {
+            e.target.style.backgroundColor = "red"
+            hitAbort.abort()
+          } else if (hitStatus === 1) {
+            hitAbort.abort()
+            e.target.style.backgroundColor = "green"
+          } else {
+            flashCellRed(e)
+          }
+        },
+        { signal: hitAbort.signal }
+      )
+    }
 
-    const finishButton = document.querySelector("#finish-button")
+    addGameboardListeners()
+
+    boardToggle.addEventListener("click", () => {
+      boardToggle.classList.toggle("active")
+      const cells = document.querySelectorAll(".coord")
+      cells.forEach((cell) => {
+        cell.style.backgroundColor = ""
+      })
+
+      if (boardToggle.classList.contains("active")) {
+        // shows your board and dissallows attacking
+        highlightShipsGray(currentPlayer)
+        highlightHitsAndMisses(currentPlayer)
+        hitAbort.abort()
+      } else if (
+        boardToggle.classList.contains("active") === false &&
+        hitStatus === undefined
+      ) {
+        // hides your baord and allows attacking again
+        highlightHitsAndMisses(player)
+        hitAbort = new AbortController()
+        addGameboardListeners()
+      } else {
+        // hides your board and disallows attacking if player already attacked
+        highlightHitsAndMisses(player)
+      }
+    })
+
     finishButton.addEventListener("click", () => {
       if (hitStatus === 0 || hitStatus === 1) {
         // switchplayer event
