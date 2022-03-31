@@ -50,21 +50,12 @@ const DOMController = (function () {
   // need to figure out how to skip loading pages based on if currentplayer
   // is a computer or not
   function decidePageToRender(currentPlayer, nextPlayer) {
-    // also make an async function or something that loads the page after a
-    // loading screen
     if (currentPlayer.gameboard.remainingShips.length > 0) {
       passDeviceAndLoadPage(renderShipPage, currentPlayer)
-      // renderShipPage(currentPlayer)
     } else if (currentPlayer.gameboard.allShipsSunk) {
-      // doesn't need a pass device page
-      renderWinPage(nextPlayer) // probably needs to be opposite
+      renderWinPage(nextPlayer)
     } else {
-      // also needs to take current player, so that you can toggle a view
-      // of where your own ships are (or needs to be told a variable to look
-      // for placed ship coords)
-      // also need to show places where the other player has hit already
-      passDeviceAndLoadPage(renderHitPage, nextPlayer, currentPlayer)
-      // renderHitPage(nextPlayer) // needs to be opposite
+      passDeviceAndLoadPage(renderHitPage, currentPlayer, nextPlayer)
     }
   }
 
@@ -97,15 +88,6 @@ const DOMController = (function () {
           },
           renderShipPage
         )
-        /*
-        // initGame event
-        const player1 = PlayerFactory(inputs[0].value)
-        const player2 = PlayerFactory(inputs[1].value)
-        Game.init(player1, player2)
-
-        // start game event
-        renderShipPage(Game.currentPlayer)
-        */
       }
     })
   }
@@ -336,8 +318,7 @@ const DOMController = (function () {
     })
   }
 
-  function renderHitPage(player, currentPlayer) {
-    console.log([player, currentPlayer])
+  function renderHitPage(currentPlayer, nextPlayer) {
     body.innerHTML = `
     <header>
       <h1>Battleship</h1>
@@ -460,8 +441,8 @@ const DOMController = (function () {
     <button id='board-toggle'>Toggle Board</button>
     <button id='finish-button'>Finish</button>`
 
-    highlightHitsAndMisses(player)
-    placeHitListeners(player, currentPlayer)
+    highlightHitsAndMisses(nextPlayer)
+    placeHitListeners(currentPlayer, nextPlayer)
     // there should be a toggle view button
 
     // to make the toggle view work, I have to save the coords where the ships
@@ -503,7 +484,7 @@ const DOMController = (function () {
     }
   }
 
-  function placeHitListeners(player, currentPlayer) {
+  function placeHitListeners(currentPlayer, nextPlayer) {
     const gameboard = document.querySelector("#board")
     const boardToggle = document.querySelector("#board-toggle")
     const finishButton = document.querySelector("#finish-button")
@@ -518,7 +499,7 @@ const DOMController = (function () {
           const dataKey = e.target.getAttribute("data-key")
           if (dataKey === null) return
 
-          hitStatus = player.gameboard.recieveAttack(dataKey)
+          hitStatus = nextPlayer.gameboard.recieveAttack(dataKey)
           console.log(hitStatus)
           if (hitStatus === 0) {
             e.target.style.backgroundColor = "red"
@@ -553,12 +534,12 @@ const DOMController = (function () {
         hitStatus === undefined
       ) {
         // hides your baord and allows attacking again
-        highlightHitsAndMisses(player)
+        highlightHitsAndMisses(nextPlayer)
         hitAbort = new AbortController()
         addGameboardListeners()
       } else {
         // hides your board and disallows attacking if player already attacked
-        highlightHitsAndMisses(player)
+        highlightHitsAndMisses(nextPlayer)
       }
     })
 
