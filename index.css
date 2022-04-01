@@ -12,6 +12,8 @@ body {
   height: 98%;
   display: flex;
   flex-direction: column;
+  background-image: url("body-background.jpg");
+  background-size: cover;
 }
 
 header {
@@ -19,66 +21,115 @@ header {
   justify-content: center;
 }
 
-#play-area {
-  flex: 9;
-  height: 100%;
+/* Player Name Page*/
+form {
+  height: 70%;
   display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 2%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1%;
 }
 
+form input {
+  font-size: 125%;
+  height: 5vh;
+  width: 20vh;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px inset black;
+  background-color: gainsboro;
+}
+
+form button {
+  height: 2.5vh;
+  width: 20vh;
+}
+
+#play-area {
+  height: 100%;
+  display: flex;
+  gap: 20px;
+}
+
+/*ship page*/
 #board {
+  flex: 1 1 66%;
   display: flex;
   flex-wrap: wrap;
-  border: 1px solid black;
-  flex: 3 0 auto;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  background-color: rgba(175, 175, 175, 0.4);
 }
 
 #board .coord {
   display: flex;
-  border: 1px solid black;
+  border: 2px solid black;
+  border-bottom: none;
+  border-right: none;
   flex: 1 1 10%;
   transition: all ease-in-out 100ms;
 }
 
 #ships {
-  flex: 1;
+  flex: 1 0 33%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1%;
+}
+
+.ship {
   border: 1px solid black;
-}
-/*
-.ship[data-ship='carrier'] {
-  position: absolute;
-  top: 15%;
-}
-
-.ship[data-ship='battleship'] {
-  position: absolute;
-  top: 35%;
+  height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(204, 204, 204, 0.4);
 }
 
-.ship[data-ship='cruiser'] {
-  position: absolute;
-  top: 55%;
+.ship[data-ship="carrier"] {
+  width: 100%;
 }
 
-.ship[data-ship='submarine'] {
-  position: absolute;
-  top: 75%;
+.ship[data-ship="battleship"] {
+  width: 80%;
 }
 
-.ship[data-ship='destroyer'] {
-  position: absolute;
-  top: 85%;
+.ship[data-ship="cruiser"] {
+  width: 60%;
 }
-*/
+
+.ship[data-ship="submarine"] {
+  width: 60%;
+}
+
+.ship[data-ship="destroyer"] {
+  width: 40%;
+}
+
 .buttons {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+/* hit page */
+#hit-board {
+  flex: 1 0 49%;
+  display: flex;
+  flex-wrap: wrap;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  background-color: rgba(175, 175, 175, 0.4);
+}
+
+#hit-board .coord {
+  display: flex;
+  border: 2px solid black;
+  border-bottom: none;
+  border-right: none;
+  flex: 1 1 10%;
+  transition: all ease-in-out 100ms;
 }
