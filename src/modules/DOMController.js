@@ -62,14 +62,16 @@ const DOMController = (function () {
   document.addEventListener("startGame", renderPlayerPage)
   function renderPlayerPage() {
     body.innerHTML = `
-    <h1>Welcome to BattleShip</h1>
+    <header>
+      <h1>Welcome to BattleShip</h1>
+    </header>
 
     <form>
-      <label for='player1'>Player1</label>
-      <input id='player1'>
+      <label for='player1' hidden>Player1</label>
+      <input id='player1' type='text' placeholder='Player 1'>
 
-      <label for='player2'>Player2</label>
-      <input id='player2'>
+      <label for='player2' hidden>Player2</label>
+      <input id='player2' type='text' placeholder='Player 2'>
 
       <button>Submit</button>
     </form>`
@@ -212,11 +214,11 @@ const DOMController = (function () {
       </div>
 
       <div id="ships">
-        <div class="ship" draggable="true">carrier</div>
-        <div class="ship" draggable="true">battleship</div>
-        <div class="ship" draggable="true">cruiser</div>
-        <div class="ship" draggable="true">submarine</div>
-        <div class="ship" draggable="true">destroyer</div>
+        <div class="ship" draggable="true" data-ship='carrier'>carrier</div>
+        <div class="ship" draggable="true" data-ship='battleship'>battleship</div>
+        <div class="ship" draggable="true" data-ship='cruiser'>cruiser</div>
+        <div class="ship" draggable="true" data-ship='submarine'>submarine</div>
+        <div class="ship" draggable="true" data-ship='destroyer'>destroyer</div>
       </div>
     </section>
 
@@ -258,18 +260,6 @@ const DOMController = (function () {
     setTimeout(() => (e.target.style.backgroundColor = currentColor), 250)
   }
 
-  function highlightCoordsGreen(coordsToHighlight) {
-    const elems = []
-    coordsToHighlight.forEach((coord) => {
-      const elem = document.querySelector(`.coord[data-key="${coord}"]`)
-      elems.push(elem)
-    })
-
-    elems.forEach((elem) => {
-      elem.style.backgroundColor = "green"
-    })
-  }
-
   function placeShipListeners(player) {
     let dragged
     const ships = document.querySelector("#ships")
@@ -303,7 +293,9 @@ const DOMController = (function () {
           player2ShipCoords.push(coordsToHighlight)
           console.log(player2ShipCoords)
         }
-        highlightCoordsGreen(coordsToHighlight)
+
+        highlightShipsGray(player)
+        dragged.remove()
         // push to each player's ship coords. Max ships coords === 5
       } else {
         flashCellRed(e)
@@ -438,22 +430,28 @@ const DOMController = (function () {
       </div>
     </section>
 
-    <button id='board-toggle'>Toggle Board</button>
     <button id='finish-button'>Finish</button>`
 
-    highlightHitsAndMisses(nextPlayer)
-    placeHitListeners(currentPlayer, nextPlayer)
+    const board = document.querySelector("#board")
+    const hitBoard = board.cloneNode(true)
+    hitBoard.id = "hit-board"
+    document.querySelector("#play-area").appendChild(hitBoard)
+
+    highlightShipsGray(currentPlayer)
+    highlightHitsAndMisses(currentPlayer, board)
+    highlightHitsAndMisses(nextPlayer, hitBoard)
+    placeHitListeners(nextPlayer, hitBoard)
     // there should be a toggle view button
 
     // to make the toggle view work, I have to save the coords where the ships
     // are placed somewhere before the hitpage is rendered.
   }
 
-  function highlightHitsAndMisses(player) {
+  function highlightHitsAndMisses(player, domboard) {
     const board = player.gameboard.board
 
     for (const coord in board) {
-      const cell = document.querySelector(`.coord[data-key='${coord}']`)
+      const cell = domboard.querySelector(`.coord[data-key='${coord}']`)
       if (board[coord] === "miss") {
         cell.style.backgroundColor = "red"
       } else if (board[coord] === "hit") {
@@ -484,64 +482,34 @@ const DOMController = (function () {
     }
   }
 
-  function placeHitListeners(currentPlayer, nextPlayer) {
-    const gameboard = document.querySelector("#board")
-    const boardToggle = document.querySelector("#board-toggle")
+  function placeHitListeners(nextPlayer, hitBoard) {
     const finishButton = document.querySelector("#finish-button")
-    let hitAbort = new AbortController()
+    const hitAbort = new AbortController()
     let hitStatus
 
     // allows attacking and colors cells red (miss) or green (hit)
-    const addGameboardListeners = () => {
-      gameboard.addEventListener(
-        "click",
-        (e) => {
-          const dataKey = e.target.getAttribute("data-key")
-          if (dataKey === null) return
 
-          hitStatus = nextPlayer.gameboard.recieveAttack(dataKey)
-          console.log(hitStatus)
-          if (hitStatus === 0) {
-            e.target.style.backgroundColor = "red"
-            hitAbort.abort()
-          } else if (hitStatus === 1) {
-            hitAbort.abort()
-            e.target.style.backgroundColor = "green"
-          } else {
-            flashCellRed(e)
-          }
-        },
-        { signal: hitAbort.signal }
-      )
-    }
+    hitBoard.addEventListener(
+      "click",
+      (e) => {
+        const dataKey = e.target.getAttribute("data-key")
+        if (dataKey === null) return
 
-    addGameboardListeners()
-
-    boardToggle.addEventListener("click", () => {
-      boardToggle.classList.toggle("active")
-      const cells = document.querySelectorAll(".coord")
-      cells.forEach((cell) => {
-        cell.style.backgroundColor = ""
-      })
-
-      if (boardToggle.classList.contains("active")) {
-        // shows your board and dissallows attacking
-        highlightShipsGray(currentPlayer)
-        highlightHitsAndMisses(currentPlayer)
-        hitAbort.abort()
-      } else if (
-        boardToggle.classList.contains("active") === false &&
-        hitStatus === undefined
-      ) {
-        // hides your baord and allows attacking again
-        highlightHitsAndMisses(nextPlayer)
-        hitAbort = new AbortController()
-        addGameboardListeners()
-      } else {
-        // hides your board and disallows attacking if player already attacked
-        highlightHitsAndMisses(nextPlayer)
-      }
-    })
+        hitStatus = nextPlayer.gameboard.recieveAttack(dataKey)
+        console.log(hitStatus)
+        if (hitStatus === 0) {
+          e.target.style.backgroundColor = "red"
+          hitAbort.abort()
+        } else if (hitStatus === 1) {
+          hitAbort.abort()
+          e.target.style.backgroundColor = "green"
+        } else {
+          console.log("flash")
+          flashCellRed(e)
+        }
+      },
+      { signal: hitAbort.signal }
+    )
 
     finishButton.addEventListener("click", () => {
       if (hitStatus === 0 || hitStatus === 1) {
