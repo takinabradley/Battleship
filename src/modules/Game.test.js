@@ -18,8 +18,8 @@ test("Game.init event can be used to set players", () => {
   const evt = new CustomEvent("Game.init", {
     bubbles: true,
     detail: {
-      player1: "greg",
-      player2: "may",
+      player1: ["greg", 1],
+      player2: ["may", 2],
       callbackFunc: callBack,
     },
   })
@@ -35,8 +35,8 @@ test("Game.switchPlayer event can be used to switch players", () => {
   const initEvt = new CustomEvent("Game.init", {
     bubbles: true,
     detail: {
-      player1: "greg",
-      player2: "may",
+      player1: ["greg", 1],
+      player2: ["may", 2],
     },
   })
   document.dispatchEvent(initEvt)
