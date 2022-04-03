@@ -50,6 +50,28 @@ const DOMController = (function () {
   // need to figure out how to skip loading pages based on if currentplayer
   // is a computer or not
   function decidePageToRender(currentPlayer, nextPlayer) {
+    /* For implementation of computer players. Need a way to skip pass page.
+    if (
+      currentPlayer.isComputer === true &&
+      currentPlayer.gameboard.remainingShips.length > 0
+    ) {
+      currentPlayer.gameboard.placeShip(null, null, null, true)
+      currentPlayer.gameboard.placeShip(null, null, null, true)
+      currentPlayer.gameboard.placeShip(null, null, null, true)
+      currentPlayer.gameboard.placeShip(null, null, null, true)
+      currentPlayer.gameboard.placeShip(null, null, null, true)
+      fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+      return
+    } else if (
+      currentPlayer.isComputer === true &&
+      currentPlayer.gameboard.allShipsSunk !== true
+    ) {
+      console.log(nextPlayer.gameboard.recieveAttack("random"))
+      fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+      return
+    }
+    */
+
     if (currentPlayer.gameboard.remainingShips.length > 0) {
       passDeviceAndLoadPage(renderShipPage, currentPlayer)
     } else if (currentPlayer.gameboard.allShipsSunk) {
@@ -85,8 +107,9 @@ const DOMController = (function () {
         fireCustomEvent(
           "Game.init",
           {
-            player1: inputs[0].value,
-            player2: inputs[1].value,
+            player1: [inputs[0].value, 1],
+            // player2: [inputs[1].value, 2, true] //true can be passed to make a computer player
+            player2: [inputs[1].value, 2],
           },
           renderShipPage
         )
@@ -441,10 +464,6 @@ const DOMController = (function () {
     highlightHitsAndMisses(currentPlayer, board)
     highlightHitsAndMisses(nextPlayer, hitBoard)
     placeHitListeners(nextPlayer, hitBoard)
-    // there should be a toggle view button
-
-    // to make the toggle view work, I have to save the coords where the ships
-    // are placed somewhere before the hitpage is rendered.
   }
 
   function highlightHitsAndMisses(player, domboard) {
