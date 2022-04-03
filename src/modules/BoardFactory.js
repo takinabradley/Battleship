@@ -319,7 +319,26 @@ export default function BoardFactory() {
     }
   }
 
+  function _attackRandomCoord() {
+    const validCoords = []
+    for (const prop in board) {
+      if (
+        board[prop] === "" ||
+        (typeof board[prop] === "object" && board[prop].isHit === false)
+      ) {
+        validCoords.push(prop)
+      }
+    }
+
+    const randomValidCoord =
+      validCoords[Math.floor(Math.random() * validCoords.length)]
+    return recieveAttack(randomValidCoord)
+  }
+
   function recieveAttack(coords) {
+    if (coords === "random") {
+      return _attackRandomCoord()
+    }
     // hit 1, miss 0, already hit -1
     if (typeof board[coords] === "object" && !board[coords].isHit) {
       board[coords].hit()
@@ -330,6 +349,8 @@ export default function BoardFactory() {
     } else if (typeof board[coords] === "object" && board[coords].isHit) {
       return -1
     } else if (board[coords] === "miss") {
+      return -1
+    } else {
       return -1
     }
   }

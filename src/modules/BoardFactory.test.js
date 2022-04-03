@@ -367,6 +367,17 @@ test("recieveAttack returns 1 on a hit, 0 on a miss, and -1 if space has already
   expect(Gameboard.recieveAttack("A6")).toBe(-1)
 })
 
+test("recieveAttack can hit a random, valid coordinate", () => {
+  const Gameboard = BoardFactory()
+  Gameboard.placeShip("carrier", "A3", "horizontal")
+
+  for (let i = 0; i < 100; i++) {
+    expect(Gameboard.recieveAttack("random")).not.toBe(-1)
+  }
+  console.log(Gameboard.board)
+  expect(Gameboard.recieveAttack("random")).toBe(-1)
+})
+
 test("Gameboard.board shows hits and misses", () => {
   const Gameboard = BoardFactory()
   Gameboard.placeShip("carrier", "A3", "horizontal")
