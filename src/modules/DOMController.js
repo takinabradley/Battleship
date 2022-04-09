@@ -22,6 +22,10 @@ const DOMController = (function () {
     document.dispatchEvent(evt)
   }
 
+  function waitOneSecond(callbackFunc) {
+    setTimeout(() => callbackFunc(), 1000)
+  }
+
   function passDeviceAndLoadPage(pageCallback, ...pageArgs) {
     // paint screen
     let count = 3
@@ -47,37 +51,44 @@ const DOMController = (function () {
     // load new page at end of countdown
   }
 
-  // need to figure out how to skip loading pages based on if currentplayer
-  // is a computer or not
-  function decidePageToRender(currentPlayer, nextPlayer) {
-    /* For implementation of computer players. Need a way to skip pass page.
-    if (
-      currentPlayer.isComputer === true &&
-      currentPlayer.gameboard.remainingShips.length > 0
-    ) {
-      currentPlayer.gameboard.placeShip(null, null, null, true)
-      currentPlayer.gameboard.placeShip(null, null, null, true)
-      currentPlayer.gameboard.placeShip(null, null, null, true)
-      currentPlayer.gameboard.placeShip(null, null, null, true)
-      currentPlayer.gameboard.placeShip(null, null, null, true)
-      fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
-      return
-    } else if (
-      currentPlayer.isComputer === true &&
-      currentPlayer.gameboard.allShipsSunk !== true
-    ) {
-      console.log(nextPlayer.gameboard.recieveAttack("random"))
-      fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
-      return
+  function placeComputerShips(computerPlayer) {
+    for (let i = 0; i < 5; i++) {
+      const computerCoord = computerPlayer.gameboard.placeShip(
+        null,
+        null,
+        null,
+        true
+      )
+      player2ShipCoords.push(computerCoord)
     }
-    */
+  }
 
+  // this is really gross.
+  function decidePageToRender(currentPlayer, nextPlayer) {
     if (currentPlayer.gameboard.remainingShips.length > 0) {
-      passDeviceAndLoadPage(renderShipPage, currentPlayer)
+      if (currentPlayer.isComputer) {
+        placeComputerShips(currentPlayer)
+        fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+      } else {
+        if (nextPlayer.isComputer) {
+          renderShipPage(currentPlayer)
+        } else {
+          passDeviceAndLoadPage(renderShipPage, currentPlayer)
+        }
+      }
     } else if (currentPlayer.gameboard.allShipsSunk) {
       renderWinPage(nextPlayer)
     } else {
-      passDeviceAndLoadPage(renderHitPage, currentPlayer, nextPlayer)
+      if (currentPlayer.isComputer) {
+        nextPlayer.gameboard.recieveAttack("random")
+        fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+      } else {
+        if (nextPlayer.isComputer) {
+          renderHitPage(currentPlayer, nextPlayer)
+        } else {
+          passDeviceAndLoadPage(renderHitPage, currentPlayer, nextPlayer)
+        }
+      }
     }
   }
 
@@ -96,7 +107,10 @@ const DOMController = (function () {
       <input id='player2' type='text' placeholder='Player 2'>
 
       <button>Submit</button>
-    </form>`
+      <button type='button'>Play Against Computer</button>
+    </form>
+    
+    `
 
     const form = document.querySelector("form")
     const inputs = [...document.querySelectorAll("input")]
@@ -114,6 +128,20 @@ const DOMController = (function () {
           renderShipPage
         )
       }
+    })
+
+    form.addEventListener("click", (e) => {
+      console.log(e.target)
+      if (e.target.textContent !== "Play Against Computer") return
+      fireCustomEvent(
+        "Game.init",
+        {
+          player1: ["You", 1, false],
+          // player2: [inputs[1].value, 2, true] //true can be passed to make a computer player
+          player2: ["Computer", 2, true],
+        },
+        renderShipPage
+      )
     })
   }
 
@@ -519,9 +547,15 @@ const DOMController = (function () {
         if (hitStatus === 0) {
           e.target.style.backgroundColor = "red"
           hitAbort.abort()
+          waitOneSecond(() =>
+            fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+          )
         } else if (hitStatus === 1) {
           hitAbort.abort()
           e.target.style.backgroundColor = "green"
+          waitOneSecond(() =>
+            fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+          )
         } else {
           console.log("flash")
           flashCellRed(e)
