@@ -4,8 +4,34 @@ const DOMController = (function () {
   const player2ShipCoords = []
 
   function renderWinPage(winner) {
-    body.innerHTML = `${winner.name} wins!`
+    body.innerHTML = ""
+    let winMessage
+    if (winner.name === "You") {
+      winMessage = "You win!"
+    } else {
+      winMessage = `${winner.name} wins!`
+    }
+
+    const playAgain = document.createElement("section")
+    playAgain.classList.add("play-again")
+    body.appendChild(playAgain)
+    const winnerElem = document.createElement("h2")
+    winnerElem.classList.add("winner")
+    winnerElem.textContent = winMessage
+    const playAgainButton = document.createElement("button")
+    playAgainButton.textContent = "Play Again"
+    playAgainButton.classList.add("againBtn")
+    playAgain.append(winnerElem, playAgainButton)
+
+    playAgainButton.addEventListener("click", playGameAgain)
     console.log([winner.name, winner.gameboard.allShipsSunk])
+  }
+
+  function playGameAgain() {
+    player1ShipCoords.length = 0
+    player2ShipCoords.length = 0
+
+    fireCustomEvent("startGame", {})
   }
 
   // needs an expect player detail?
@@ -22,8 +48,8 @@ const DOMController = (function () {
     document.dispatchEvent(evt)
   }
 
-  function waitOneSecond(callbackFunc) {
-    setTimeout(() => callbackFunc(), 1000)
+  function waitOneSecond(callbackFunc, ...args) {
+    setTimeout(() => callbackFunc(...args), 1000)
   }
 
   function passDeviceAndLoadPage(pageCallback, ...pageArgs) {
@@ -275,7 +301,6 @@ const DOMController = (function () {
 
     <section class="buttons">
       <button class="orientation-toggle">horizontal</button>
-      <h2>Buttons n' stuff</h2>
       <button id='finish-button'>Finish</button>
     </section>`
 
@@ -367,9 +392,10 @@ const DOMController = (function () {
 
   function renderHitPage(currentPlayer, nextPlayer) {
     body.innerHTML = `
-    <header>
-      <h1>Battleship</h1>
-    </header>
+    <section class='board-headings'>
+      <h1>Your Board</h1>
+      <h1>Enemy Board</h1>
+    </section>
 
     <section id="play-area">
       <div id="board">
@@ -483,9 +509,7 @@ const DOMController = (function () {
         <div data-key="J9" class="coord"></div>
         <div data-key="J10" class="coord"></div>
       </div>
-    </section>
-
-    <button id='finish-button'>Finish</button>`
+    </section>`
 
     const board = document.querySelector("#board")
     const hitBoard = board.cloneNode(true)
@@ -504,9 +528,9 @@ const DOMController = (function () {
     for (const coord in board) {
       const cell = domboard.querySelector(`.coord[data-key='${coord}']`)
       if (board[coord] === "miss") {
-        cell.style.backgroundColor = "red"
+        cell.style.backgroundColor = "darkred"
       } else if (board[coord] === "hit") {
-        cell.style.backgroundColor = "green"
+        cell.style.backgroundColor = "darkgreen"
       }
     }
   }
@@ -549,16 +573,22 @@ const DOMController = (function () {
         hitStatus = nextPlayer.gameboard.recieveAttack(dataKey)
         console.log(hitStatus)
         if (hitStatus === 0) {
-          e.target.style.backgroundColor = "red"
+          e.target.style.backgroundColor = "darkred"
           hitAbort.abort()
-          waitOneSecond(() =>
-            fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+          waitOneSecond(
+            fireCustomEvent,
+            "Game.switchPlayer",
+            {},
+            decidePageToRender
           )
         } else if (hitStatus === 1) {
           hitAbort.abort()
-          e.target.style.backgroundColor = "green"
-          waitOneSecond(() =>
-            fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
+          e.target.style.backgroundColor = "darkgreen"
+          waitOneSecond(
+            fireCustomEvent,
+            "Game.switchPlayer",
+            {},
+            decidePageToRender
           )
         } else {
           console.log("flash")
@@ -567,13 +597,6 @@ const DOMController = (function () {
       },
       { signal: hitAbort.signal }
     )
-
-    finishButton.addEventListener("click", () => {
-      if (hitStatus === 0 || hitStatus === 1) {
-        // switchplayer event
-        fireCustomEvent("Game.switchPlayer", {}, decidePageToRender)
-      }
-    })
   }
 })()
 
