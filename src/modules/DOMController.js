@@ -24,7 +24,6 @@ const DOMController = (function () {
     playAgain.append(winnerElem, playAgainButton)
 
     playAgainButton.addEventListener("click", playGameAgain)
-    console.log([winner.name, winner.gameboard.allShipsSunk])
   }
 
   function playGameAgain() {
@@ -161,7 +160,6 @@ const DOMController = (function () {
     })
 
     form.addEventListener("click", (e) => {
-      console.log(e.target)
       if (e.target.textContent !== "Play Against Computer") return
       fireCustomEvent(
         "Game.init",
@@ -374,10 +372,8 @@ const DOMController = (function () {
       if (coordsToHighlight.length > 0) {
         if (player.playerNum === 1) {
           player1ShipCoords.push(coordsToHighlight)
-          console.log(player1ShipCoords)
         } else {
           player2ShipCoords.push(coordsToHighlight)
-          console.log(player2ShipCoords)
         }
 
         highlightShipsGray(player)
@@ -422,8 +418,6 @@ const DOMController = (function () {
           touchLocation.pageY
         )
 
-        console.log(dropElem)
-
         if (dropElem.classList.contains("coord")) {
           const dataKey = dropElem.getAttribute("data-key")
           const shipName = dragged.textContent
@@ -437,10 +431,8 @@ const DOMController = (function () {
           if (coordsToHighlight.length > 0) {
             if (player.playerNum === 1) {
               player1ShipCoords.push(coordsToHighlight)
-              console.log(player1ShipCoords)
             } else {
               player2ShipCoords.push(coordsToHighlight)
-              console.log(player2ShipCoords)
             }
 
             highlightShipsGray(player)
@@ -642,7 +634,6 @@ const DOMController = (function () {
         if (dataKey === null) return
 
         hitStatus = nextPlayer.gameboard.recieveAttack(dataKey)
-        console.log(hitStatus)
         if (hitStatus === 0) {
           e.target.style.backgroundColor = "darkred"
           hitAbort.abort()
@@ -662,7 +653,6 @@ const DOMController = (function () {
             decidePageToRender
           )
         } else {
-          console.log("flash")
           flashCellRed(e)
         }
       },

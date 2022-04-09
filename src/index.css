@@ -193,7 +193,22 @@ form button {
 }
 
 .winner {
+  font-size: 30px;
 }
 
 .againBtn {
+  font-size: 20px;
+  background-color: rgba(89, 216, 255, 0.8);
+  border: none;
+  border-radius: 5px;
+}
+
+.countdown {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  color: rgb(187, 143, 31);
 }
