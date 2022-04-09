@@ -346,7 +346,9 @@ const DOMController = (function () {
 
   function placeShipListeners(player) {
     let dragged
+    let touchLocation
     const ships = document.querySelector("#ships")
+    const shipElems = document.querySelectorAll(".ship")
     const board = document.querySelector("#board")
     const orientationToggle = document.querySelector(".orientation-toggle")
     const finishButton = document.querySelector("#finish-button")
@@ -384,6 +386,71 @@ const DOMController = (function () {
       } else {
         flashCellRed(e)
       }
+    })
+
+    shipElems.forEach((ship) => {
+      ship.addEventListener("touchmove", (e) => {
+        dragged = e.target
+        touchLocation = e.targetTouches[0]
+        const allCoords = document.querySelectorAll(".coord")
+        const hoveredElem = document.elementFromPoint(
+          touchLocation.pageX,
+          touchLocation.pageY
+        )
+
+        if (hoveredElem.classList.contains("coord")) {
+          allCoords.forEach((coord) => {
+            if (coord.style.backgroundColor !== "gray")
+              coord.style.backgroundColor = ""
+          })
+
+          const originalColor = hoveredElem.style.backgroundColor
+
+          if (originalColor !== "gray")
+            hoveredElem.style.backgroundColor = "lightgray"
+        } else {
+          allCoords.forEach((coord) => {
+            if (coord.style.backgroundColor !== "gray")
+              coord.style.backgroundColor = ""
+          })
+        }
+      })
+
+      ship.addEventListener("touchend", () => {
+        const dropElem = document.elementFromPoint(
+          touchLocation.pageX,
+          touchLocation.pageY
+        )
+
+        console.log(dropElem)
+
+        if (dropElem.classList.contains("coord")) {
+          const dataKey = dropElem.getAttribute("data-key")
+          const shipName = dragged.textContent
+          const orientation = orientationToggle.textContent
+          const coordsToHighlight = player.gameboard.placeShip(
+            shipName,
+            dataKey,
+            orientation
+          )
+
+          if (coordsToHighlight.length > 0) {
+            if (player.playerNum === 1) {
+              player1ShipCoords.push(coordsToHighlight)
+              console.log(player1ShipCoords)
+            } else {
+              player2ShipCoords.push(coordsToHighlight)
+              console.log(player2ShipCoords)
+            }
+
+            highlightShipsGray(player)
+            dragged.remove()
+            // push to each player's ship coords. Max ships coords === 5
+          } else {
+            flashCellRed({ target: dropElem })
+          }
+        }
+      })
     })
 
     finishButton.addEventListener("click", () => {
