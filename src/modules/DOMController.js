@@ -283,10 +283,14 @@ const DOMController = (function () {
   }
 
   function changeOrientationText(e) {
+    const ships = document.querySelectorAll(".ship")
+
     if (e.target.textContent === "horizontal") {
       e.target.textContent = "vertical"
+      ships.forEach((ship) => ship.classList.toggle("vertical"))
     } else if (e.target.textContent === "vertical") {
       e.target.textContent = "horizontal"
+      ships.forEach((ship) => ship.classList.toggle("vertical"))
     }
   }
 
