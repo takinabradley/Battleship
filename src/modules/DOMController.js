@@ -56,14 +56,18 @@ const DOMController = (function () {
     // paint screen
     let count = 3
     body.innerHTML = ``
+    const countDownSection = document.createElement("section")
+    countDownSection.classList.add("countdown")
+    body.appendChild(countDownSection)
+
     const header = document.createElement("h1")
     header.textContent = "Please Pass The Device"
-    body.appendChild(header)
 
     const countdownElem = document.createElement("p")
     countdownElem.id = "countdown"
     countdownElem.textContent = count
-    body.appendChild(countdownElem)
+
+    countDownSection.append(header, countdownElem)
 
     // countdown screen
     const intervalID = setInterval(() => {
