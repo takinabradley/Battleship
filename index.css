@@ -23,7 +23,7 @@ header {
 
 /* Player Name Page*/
 form {
-  height: 70%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -33,22 +33,26 @@ form {
 
 form input {
   font-size: 125%;
-  height: 5vh;
-  width: 20vh;
+  width: 25%;
+  height: 8%;
   text-align: center;
   border-radius: 5px;
   border: 1px inset black;
-  background-color: gainsboro;
+  background-color: rgba(220, 220, 220, 0.75);
 }
 
 form button {
-  height: 2.5vh;
-  width: 20vh;
+  min-width: 25%;
+  background-color: rgba(89, 216, 255, 0.8);
+  border: none;
+  outline: 2px solid rgba(89, 216, 255, 0.8);
+  border-radius: 5px;
 }
 
 #play-area {
   height: 100%;
   display: flex;
+  justify-content: space-around;
   gap: 20px;
 }
 
@@ -57,14 +61,14 @@ form button {
   flex: 1 1 66%;
   display: flex;
   flex-wrap: wrap;
-  border-right: 2px solid black;
-  border-bottom: 2px solid black;
-  background-color: rgba(175, 175, 175, 0.4);
+  border-right: 2px solid goldenrod;
+  border-bottom: 2px solid goldenrod;
+  background-color: rgba(117, 117, 117, 0.4);
 }
 
 #board .coord {
   display: flex;
-  border: 2px solid black;
+  border: 2px solid goldenrod;
   border-bottom: none;
   border-right: none;
   flex: 1 1 10%;
@@ -88,7 +92,7 @@ form button {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(204, 204, 204, 0.4);
+  background-color: rgba(175, 175, 175, 0.6);
 }
 
 .ship[data-ship="carrier"] {
@@ -117,7 +121,6 @@ form button {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(204, 204, 204, 0.4);
   word-break: break-all;
   word-wrap: break-word;
 }
@@ -143,26 +146,54 @@ form button {
 }
 
 .buttons {
-  flex: 1;
+  flex: 2 0 7%;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
+}
+
+.buttons button {
+  height: 75%;
+  width: 20%;
+  background-color: rgba(89, 216, 255, 0.8);
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
 }
 /* hit page */
 #hit-board {
-  flex: 1 0 49%;
+  flex: 1 1 66%;
   display: flex;
   flex-wrap: wrap;
-  border-right: 2px solid black;
-  border-bottom: 2px solid black;
-  background-color: rgba(175, 175, 175, 0.4);
+  border-right: 2px solid goldenrod;
+  border-bottom: 2px solid goldenrod;
+  background-color: rgba(117, 117, 117, 0.4);
 }
 
 #hit-board .coord {
   display: flex;
-  border: 2px solid black;
+  border: 2px solid goldenrod;
   border-bottom: none;
   border-right: none;
   flex: 1 1 10%;
   transition: all ease-in-out 100ms;
+}
+
+.board-headings {
+  display: flex;
+  justify-content: space-around;
+}
+
+.play-again {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.winner {
+}
+
+.againBtn {
 }
